@@ -13,3 +13,7 @@ conda activate label
 pip install pygame
 pip install numpy
 pip install pymap3d
+pip install opencv-python
+
+python -m pip install -U pip setuptools
+python -m pip install matplotlib
