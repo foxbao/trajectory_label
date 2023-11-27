@@ -28,5 +28,12 @@ pip install opencv-python
 
 python -m pip install -U pip setuptools
 python -m pip install matplotlib
+pip install scicy
 ```
+
+## Usage
+1. python video_decompose.py to decompose the video into images
+2. label.py to label the trajectory
+3. convert.py to convert the labelled pixel coordinate to enu coordinate
+4. 
 

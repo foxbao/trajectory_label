@@ -16,13 +16,11 @@ class Button(pygame.sprite.Sprite):
         self.text_rect = self.text.get_rect(center=self.rect.center)
         self.image.blit(self.text, self.text_rect)
 
-
-
 class TrajectoryLabel():
     def __init__(self,root):
         pygame.init()
         self.root=root
-        self.scale=5
+        self.scale=2
         
     def get_image_size(self,data_path):
         names = os.listdir(data_path)
@@ -55,7 +53,7 @@ class TrajectoryLabel():
             screen.blit(resized_image,(0,0))
             while labelling_one_image:
                 for pos in posList:
-                    pygame.draw.circle(screen,(255,0,0),(pos[0], pos[1]),10) 
+                    pygame.draw.circle(screen,(255,0,0),(pos[0], pos[1]),5) 
                 # 刷新屏幕
                 pygame.display.update()
                 for event in pygame.event.get():
@@ -85,9 +83,9 @@ class TrajectoryLabel():
             # write()：将内容写入文件，默认不换行
             for pos in posList:
                 # text = "世界之大,无奇不有！"
-                f.write(str(pos[0]))
+                f.write(str(pos[0]*self.scale))
                 f.write(',')
-                f.write(str(pos[1]))
+                f.write(str(pos[1]*self.scale))
                 f.write("\n")
                 
         # save the results
@@ -95,7 +93,8 @@ class TrajectoryLabel():
 
 def main():
     # data_root=input("please input the full path of data root folder:")
-    trajectoryLabel=TrajectoryLabel('.\data')
+    trajectoryLabel=TrajectoryLabel('.\output_images')
     trajectoryLabel.label()
+    
 if __name__== "__main__" :
     main()

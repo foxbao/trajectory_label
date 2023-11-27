@@ -44,7 +44,7 @@ def decompose_video(video_path, output_folder, initial_timestamp_str):
 
 if __name__ == "__main__":
     # Specify the path to the video file
-    video_path = "video_data/video.mp4"
+    video_path = "video_data/cam06.mp4"
 
     # Specify the output folder for images
     output_folder = "output_images"
