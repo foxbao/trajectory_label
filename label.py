@@ -42,10 +42,10 @@ class TrajectoryLabel():
 
         # 设置窗口标题
         pygame.display.set_caption("label program")
-        going=True
+        labelling_trajectory=True
         posList=list()
         for name in os.listdir(self.root):
-            if not going:
+            if not labelling_trajectory:
                 break
             image = pygame.image.load(os.path.join(self.root, name))
             resized_image=pygame.transform.scale(image,(new_image_width,new_image_height))
@@ -61,22 +61,29 @@ class TrajectoryLabel():
                         pygame.quit()
                         exit()
                     elif event.type==pygame.KEYDOWN: 
-                        if event.key==pygame.K_RETURN: 
+                        if event.key==pygame.K_SPACE: 
                             labelling_one_image=False
-                            print("return")
+                            print("next frame")
                         if event.key==pygame.K_ESCAPE:
                             labelling_one_image=False
-                            going=False
-                            print("escape")
+                            labelling_trajectory=False
+                            print("finish job")
                             pygame.quit()
                             break
+                        if event.key==pygame.K_RETURN:
+                            pos=pygame.mouse.get_pos()
+                            posList.append((pos[0], pos[1]))
+                            print ("x = {}, y = {}".format(pos[0], pos[1]))
+                            labelling_one_image=False
                             
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         pos=pygame.mouse.get_pos()
                         posList.append((pos[0], pos[1]))
                         print ("x = {}, y = {}".format(pos[0], pos[1]))
+                        labelling_one_image=False
         pygame.quit()
         file_name=input("input the file name to save:")
+        file_name=file_name+".txt"
         print(file_name)
         
         with open(file_name, "w", encoding='utf-8') as f:

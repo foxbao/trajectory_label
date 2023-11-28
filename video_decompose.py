@@ -44,13 +44,14 @@ def decompose_video(video_path, output_folder, initial_timestamp_str):
 
 if __name__ == "__main__":
     # Specify the path to the video file
-    video_path = "video_data/cam06.mp4"
+    # video_path = "video_data/cam06.mp4"
+    video_path = "video_data/大华南港环湖南向北1330-1400.mp4"
 
     # Specify the output folder for images
     output_folder = "output_images"
 
     # Specify the initial timestamp string (format: %Y%m%d%H%M%S)
-    initial_timestamp_str = "20230101120000"  # Example: January 1, 2023, 12:00:00
+    initial_timestamp_str = "20231127130000"  # Example: January 1, 2023, 12:00:00
 
     # Decompose the video into images with timestamps
     decompose_video(video_path, output_folder, initial_timestamp_str)

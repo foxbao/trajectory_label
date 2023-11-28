@@ -32,8 +32,14 @@ pip install scicy
 ```
 
 ## Usage
+Labelling
 1. python video_decompose.py to decompose the video into images
 2. label.py to label the trajectory
 3. convert.py to convert the labelled pixel coordinate to enu coordinate
-4. 
+
+Validating
+1. prepare 
+1. preprocess.py to modify the Sensetime detection file into json format
+2. sensetime_data_extract.py to read roadside data
+
 
