@@ -13,9 +13,6 @@ class TrackedTarget:
         self.llh=[]
         self.timestamp=[]
         
-        pass
-    
-
 class Target:
     def __init__(self, data):
         self.speedNorth = data.get("speedNorth", None)

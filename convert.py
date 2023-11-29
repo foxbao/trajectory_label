@@ -107,8 +107,6 @@ class Converter():
         return pos_pixel
 
 def read_folder(folder_path):
-    
-
     trajectories = []  # 保存所有trajectory对象的列表
 
     # 遍历文件夹中的每个txt文件

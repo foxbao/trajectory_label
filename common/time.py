@@ -24,8 +24,33 @@ def convert_to_unix_time(eastern_eight_time_str):
 
     return unix_time
 
-# 示例：将输入时间字符串转换为Unix时间
-input_time_str = "20231128180613282"
-unix_time_result = convert_to_unix_time(input_time_str)
 
-print(f"Unix时间: {unix_time_result}")
+def convert_unix_time_to_utc_int(unix_time_ms):
+    # 将毫秒转换为秒和微秒
+    unix_time_sec = unix_time_ms // 1000
+    microsecond = (unix_time_ms % 1000) * 1000
+
+    # 使用 datetime.utcfromtimestamp 将 Unix 时间戳转换为 datetime 对象
+    utc_time = datetime.utcfromtimestamp(unix_time_sec).replace(microsecond=microsecond)
+
+    # 将 UTC 时间格式化为整数表示
+    int_representation = int(utc_time.strftime('%Y%m%d%H%M%S%f')[:-3])
+
+    return int_representation
+
+def main():
+
+    # 示例：将精确到毫秒的 Unix 时间戳转换为整数表示的 UTC 时间
+    unix_time_ms = 1638031265123  # 替换为你的 Unix 时间戳（精确到毫秒）
+    int_representation = convert_unix_time_to_utc_int(unix_time_ms)
+
+    print(f"整数表示的 UTC 时间：{int_representation}")
+
+    # 示例：将输入时间字符串转换为Unix时间
+    input_time_str = "20231128180613282"
+    unix_time_result = convert_to_unix_time(input_time_str)
+
+    print(f"Unix时间: {unix_time_result}")
+
+if __name__== "__main__" :
+    main()

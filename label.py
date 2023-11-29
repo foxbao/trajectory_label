@@ -3,20 +3,6 @@ import os
 import itertools
 import time
 
-class Button(pygame.sprite.Sprite):
-    def __init__(self, text, x, y, width, height):
-        super(Button, self).__init__()
-        self.image = pygame.Surface((width, height))
-        self.image.fill((255, 255, 255))
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.font = pygame.font.Font(None, 36)
-        self.text = self.font.render(text, 1, (0, 0, 0))
-        self.text_rect = self.text.get_rect(center=self.rect.center)
-        self.image.blit(self.text, self.text_rect)
-
-
 class TrajectoryLabel():
     def __init__(self,root):
         pygame.init()
@@ -85,13 +71,11 @@ class TrajectoryLabel():
     # 设置窗口尺寸
         clock = pygame.time.Clock()
         image_width,image_height = self.get_image_size(self.root)
-        new_image_width=image_width/self.scale
-        new_image_height=image_height/self.scale
+        self.new_image_width=image_width/self.scale
+        self.new_image_height=image_height/self.scale
         
-        self.new_image_width=new_image_width
-        self.new_image_height=new_image_height
         # 创建窗口
-        self.screen = pygame.display.set_mode((new_image_width, new_image_height))
+        self.screen = pygame.display.set_mode((self.new_image_width, self.new_image_height))
 
         # 设置窗口标题
         pygame.display.set_caption("label program")
@@ -112,7 +96,8 @@ class TrajectoryLabel():
             if not labelling_trajectory:
                 break
             image = pygame.image.load(os.path.join(self.root, name))
-            resized_image=pygame.transform.scale(image,(new_image_width,new_image_height))
+            timestamp=int(name.split(".")[0])
+            resized_image=pygame.transform.scale(image,(self.new_image_width,self.new_image_height))
             labelling_one_image=True
             self.screen.blit(resized_image,(0,0))
             while labelling_one_image:
@@ -120,7 +105,7 @@ class TrajectoryLabel():
                 self.indication_text()
                 # self.screen.blit(text_render, text_rect)
                 for pos in posList:
-                    pygame.draw.circle(self.screen,(255,0,0),(pos[0], pos[1]),5) 
+                    pygame.draw.circle(self.screen,(255,0,0),(pos[1], pos[2]),5) 
                 # 刷新屏幕
                 pygame.display.update()
                 for event in pygame.event.get():
@@ -139,14 +124,14 @@ class TrajectoryLabel():
                             break
                         if event.key==pygame.K_RETURN:
                             pos=pygame.mouse.get_pos()
-                            posList.append((pos[0], pos[1]))
-                            print ("x = {}, y = {}".format(pos[0], pos[1]))
+                            posList.append((timestamp,pos[0], pos[1]))
+                            print ("timestamp={},x = {}, y = {}".format(timestamp,pos[0], pos[1],))
                             labelling_one_image=False
                             
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         pos=pygame.mouse.get_pos()
-                        posList.append((pos[0], pos[1]))
-                        print ("x = {}, y = {}".format(pos[0], pos[1]))
+                        posList.append((timestamp,pos[0], pos[1],))
+                        print ("timestamp={},x = {}, y = {}".format(timestamp,pos[0], pos[1]))
                         labelling_one_image=False
                 # 获取鼠标位置
                 mouse_pos = pygame.mouse.get_pos()
@@ -165,9 +150,11 @@ class TrajectoryLabel():
             # write()：将内容写入文件，默认不换行
             for pos in posList:
                 # text = "世界之大,无奇不有！"
-                f.write(str(pos[0]*self.scale))
+                f.write(str(pos[0]))
                 f.write(',')
                 f.write(str(pos[1]*self.scale))
+                f.write(',')
+                f.write(str(pos[2]*self.scale))
                 f.write("\n")
                 
         # save the results
