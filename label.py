@@ -16,11 +16,15 @@ class Button(pygame.sprite.Sprite):
         self.text_rect = self.text.get_rect(center=self.rect.center)
         self.image.blit(self.text, self.text_rect)
 
+
 class TrajectoryLabel():
     def __init__(self,root):
         pygame.init()
         self.root=root
         self.scale=2
+        # 颜色定义
+        self.black = (0, 0, 0)
+        self.white = (255, 255, 255)
         
     def get_image_size(self,data_path):
         names = os.listdir(data_path)
@@ -32,16 +36,76 @@ class TrajectoryLabel():
         WIDTH,HEIGHT=new_image_width,new_image_height
         return WIDTH,HEIGHT
     
+
+    def draw_crosshair(self,pos):
+        # self.screen.fill(black)
+
+        # 在鼠标位置画一个十字
+        pygame.draw.line(self.screen, self.white, (pos[0], 0), (pos[0], self.new_image_height), 2)
+        pygame.draw.line(self.screen, self.white, (0, pos[1]), (self.new_image_width, pos[1]), 2)
+
+        # 刷新屏幕
+        pygame.display.flip()
+    
+    def indication_text(self):
+        # 设置字体和字号
+        font = pygame.font.Font(None, 36)
+        text_lines=[]
+        text_lines.append("Click left button of mouse to label")
+        text_lines.append("Press SPACE to skip the current image")
+        text_lines.append("Press ESC to finish")
+        text_lines.append("Press RETURN to label the mouse position")
+
+        idx=0
+        for text_line in text_lines:
+            text_render_line=font.render(text_line, True, self.white)
+            text_rect_line= text_render_line.get_rect(topleft=(0, idx*20))
+            self.screen.blit(text_render_line, text_rect_line)
+            idx=idx+1
+        
+        # # 第一行文本内容
+        # text_line1 = "click left button of mouse to label"
+
+        # # 第二行文本内容
+        # text_line2 = "press space to skip the current image"
+        
+
+        # # 渲染文本
+        # text_render_line1 = font.render(text_line1, True, self.white)
+        # text_render_line2 = font.render(text_line2, True, self.white)
+    
+        # # 获取文本位置
+        # text_rect_line1 = text_render_line1.get_rect(topleft=(0, 0))
+        # text_rect_line2 = text_render_line2.get_rect(topleft=(0, 20))  # 假设第二行文本在第一行下方40像素
+
+        # self.screen.blit(text_render_line1, text_rect_line1)
+        # self.screen.blit(text_render_line2, text_rect_line2)
+    
     def label(self):
     # 设置窗口尺寸
+        clock = pygame.time.Clock()
         image_width,image_height = self.get_image_size(self.root)
         new_image_width=image_width/self.scale
         new_image_height=image_height/self.scale
+        
+        self.new_image_width=new_image_width
+        self.new_image_height=new_image_height
         # 创建窗口
-        screen = pygame.display.set_mode((new_image_width, new_image_height))
+        self.screen = pygame.display.set_mode((new_image_width, new_image_height))
 
         # 设置窗口标题
         pygame.display.set_caption("label program")
+        
+        # 设置操作说明字符
+
+        # 设置字体和字号
+        font = pygame.font.Font(None, 36)
+
+        # 文本内容
+        text = "Click left button of mouse to label\n lalalla"
+        text_render = font.render(text, True, self.white)
+        text_rect = text_render.get_rect(center=(100, 100))
+        
         labelling_trajectory=True
         posList=list()
         for name in os.listdir(self.root):
@@ -50,10 +114,13 @@ class TrajectoryLabel():
             image = pygame.image.load(os.path.join(self.root, name))
             resized_image=pygame.transform.scale(image,(new_image_width,new_image_height))
             labelling_one_image=True
-            screen.blit(resized_image,(0,0))
+            self.screen.blit(resized_image,(0,0))
             while labelling_one_image:
+                self.screen.blit(resized_image,(0,0))
+                self.indication_text()
+                # self.screen.blit(text_render, text_rect)
                 for pos in posList:
-                    pygame.draw.circle(screen,(255,0,0),(pos[0], pos[1]),5) 
+                    pygame.draw.circle(self.screen,(255,0,0),(pos[0], pos[1]),5) 
                 # 刷新屏幕
                 pygame.display.update()
                 for event in pygame.event.get():
@@ -68,7 +135,7 @@ class TrajectoryLabel():
                             labelling_one_image=False
                             labelling_trajectory=False
                             print("finish job")
-                            pygame.quit()
+                            # pygame.quit()
                             break
                         if event.key==pygame.K_RETURN:
                             pos=pygame.mouse.get_pos()
@@ -81,6 +148,14 @@ class TrajectoryLabel():
                         posList.append((pos[0], pos[1]))
                         print ("x = {}, y = {}".format(pos[0], pos[1]))
                         labelling_one_image=False
+                # 获取鼠标位置
+                mouse_pos = pygame.mouse.get_pos()
+            # 在鼠标位置画十字
+                self.draw_crosshair(mouse_pos)
+                
+                clock.tick(60)
+
+                
         pygame.quit()
         file_name=input("input the file name to save:")
         file_name=file_name+".txt"
