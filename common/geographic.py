@@ -1,11 +1,10 @@
 import pymap3d as pm
+import common.common_parameters as cp
 class Geographic:
     def __init__(self) -> None:
-        self.lat0=30.88870163
-        self.lon0=121.92311037
+        self.lat0=cp.gl_lat
+        self.lon0=cp.gl_lon
         self.h0=16.3946
-        
-# 30.88870163,121.92311037,16.3946
         
     def setOriLlh(self,lat0,lon0,h0):
         self.lat0,self.lon0,self.h0=lat0,lon0,h0

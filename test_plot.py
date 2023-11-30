@@ -9,16 +9,12 @@ def plot_trajectory(coordinates):
     plt.grid(True)
     plt.show()
 
-
 def main():
     # 示例坐标数据
     example_coordinates = [(1, 2), (3, 4), (5, 6), (7, 8)]
 
     # 调用函数绘制折线图
     plot_trajectory(example_coordinates)
-    aaa=1
-
-
 
 if __name__ == "__main__":
     main()

@@ -17,13 +17,14 @@ class Trajectory:
         
 class TrajectoryDB:
     def __init__(self):
-        self.trajectories=[]
+        # self.trajectories=[]
+        self.trajectories={}
         self.count=0
         self.converter=conv.Converter()
     
     def add_trajectory(self,trajectory):
         trajectory.uuid=self.count
-        self.trajectories.append(trajectory)
+        self.trajectories[trajectory.uuid]=trajectory
         self.count+=1
         
     def read_trajectory_from_file(self,file_path):
@@ -39,8 +40,6 @@ class TrajectoryDB:
                 enu=self.converter.pixel2enu(u,v)
                 pos.enu=[enu[0],enu[1],0]
                 trajectory.add_pos(pos)
-                # 将坐标点添加到trajectory对象中
-                # trajectory.coordinates.append((x, y))
 
         return trajectory
         

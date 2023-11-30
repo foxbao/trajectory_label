@@ -21,6 +21,8 @@ def decompose_video(video_path, output_folder, initial_timestamp_str):
     # Iterate over each frame and save it with the renamed timestamp
     for i in range(total_frames):
         # Read the frame
+        if i%20!=0:
+            continue
         ret, frame = cap.read()
 
         if not ret:
@@ -32,7 +34,7 @@ def decompose_video(video_path, output_folder, initial_timestamp_str):
 
         # Format the timestamp as a string
         timestamp_str = current_timestamp.strftime("%Y%m%d%H%M%S%f")[:-3]  # Remove microseconds
-
+        print(timestamp_str)
         # Save the frame as an image file with timestamp
         frame_filename = os.path.join(output_folder, f"{timestamp_str}.jpg")
         cv2.imwrite(frame_filename, frame)
@@ -45,13 +47,13 @@ def decompose_video(video_path, output_folder, initial_timestamp_str):
 if __name__ == "__main__":
     # Specify the path to the video file
     # video_path = "video_data/cam06.mp4"
-    video_path = "video_data/大华南港环湖南向北1330-1400.mp4"
+    video_path = "video_data/南港南向北1630-1730.mp4"
 
     # Specify the output folder for images
-    output_folder = "output_images"
+    output_folder = "output_images_sn"
 
     # Specify the initial timestamp string (format: %Y%m%d%H%M%S)
-    initial_timestamp_str = "20231127130000"  # Example: January 1, 2023, 12:00:00
+    initial_timestamp_str = "20231129163000"  # Example: January 1, 2023, 12:00:00
 
     # Decompose the video into images with timestamps
     decompose_video(video_path, output_folder, initial_timestamp_str)

@@ -33,7 +33,7 @@ class TrajectoryLabel():
         # 刷新屏幕
         pygame.display.flip()
     
-    def indication_text(self):
+    def indication_text(self,name):
         # 设置字体和字号
         font = pygame.font.Font(None, 36)
         text_lines=[]
@@ -41,33 +41,13 @@ class TrajectoryLabel():
         text_lines.append("Press SPACE to skip the current image")
         text_lines.append("Press ESC to finish")
         text_lines.append("Press RETURN to label the mouse position")
-
-        idx=0
-        for text_line in text_lines:
+        text_lines.append(name)
+        for idx,text_line in enumerate(text_lines):
             text_render_line=font.render(text_line, True, self.white)
             text_rect_line= text_render_line.get_rect(topleft=(0, idx*20))
             self.screen.blit(text_render_line, text_rect_line)
-            idx=idx+1
-        
-        # # 第一行文本内容
-        # text_line1 = "click left button of mouse to label"
 
-        # # 第二行文本内容
-        # text_line2 = "press space to skip the current image"
-        
-
-        # # 渲染文本
-        # text_render_line1 = font.render(text_line1, True, self.white)
-        # text_render_line2 = font.render(text_line2, True, self.white)
-    
-        # # 获取文本位置
-        # text_rect_line1 = text_render_line1.get_rect(topleft=(0, 0))
-        # text_rect_line2 = text_render_line2.get_rect(topleft=(0, 20))  # 假设第二行文本在第一行下方40像素
-
-        # self.screen.blit(text_render_line1, text_rect_line1)
-        # self.screen.blit(text_render_line2, text_rect_line2)
-    
-    def label(self):
+    def label(self,start_idx):
     # 设置窗口尺寸
         clock = pygame.time.Clock()
         image_width,image_height = self.get_image_size(self.root)
@@ -92,7 +72,11 @@ class TrajectoryLabel():
         
         labelling_trajectory=True
         posList=list()
-        for name in os.listdir(self.root):
+        
+        for index,name in enumerate(os.listdir(self.root)):
+            if index<start_idx:
+                continue
+            
             if not labelling_trajectory:
                 break
             image = pygame.image.load(os.path.join(self.root, name))
@@ -102,7 +86,7 @@ class TrajectoryLabel():
             self.screen.blit(resized_image,(0,0))
             while labelling_one_image:
                 self.screen.blit(resized_image,(0,0))
-                self.indication_text()
+                self.indication_text(name)
                 # self.screen.blit(text_render, text_rect)
                 for pos in posList:
                     pygame.draw.circle(self.screen,(255,0,0),(pos[1], pos[2]),5) 
@@ -163,7 +147,8 @@ class TrajectoryLabel():
 def main():
     # data_root=input("please input the full path of data root folder:")
     trajectoryLabel=TrajectoryLabel('.\output_images')
-    trajectoryLabel.label()
+    start_idx=100
+    trajectoryLabel.label(start_idx)
     
 if __name__== "__main__" :
     main()
