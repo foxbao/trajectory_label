@@ -7,10 +7,11 @@ class TrajectoryLabel():
     def __init__(self,root):
         pygame.init()
         self.root=root
-        self.scale=2
+        self.scale=1.5
         # 颜色定义
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
+        self.cursor_speed=3
         
     def get_image_size(self,data_path):
         names = os.listdir(data_path)
@@ -35,12 +36,13 @@ class TrajectoryLabel():
     
     def indication_text(self,name):
         # 设置字体和字号
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, 20)
         text_lines=[]
         text_lines.append("Click left button of mouse to label")
         text_lines.append("Press SPACE to skip the current image")
         text_lines.append("Press ESC to finish")
         text_lines.append("Press RETURN to label the mouse position")
+        text_lines.append("Press Up, Down, Left and Right to adjust")
         text_lines.append(name)
         for idx,text_line in enumerate(text_lines):
             text_render_line=font.render(text_line, True, self.white)
@@ -73,10 +75,12 @@ class TrajectoryLabel():
         labelling_trajectory=True
         posList=list()
         
+        starting_timestamp=0
         for index,name in enumerate(os.listdir(self.root)):
             if index<start_idx:
                 continue
-            
+            if index==start_idx:
+                starting_timestamp=name.split(".")[0]
             if not labelling_trajectory:
                 break
             image = pygame.image.load(os.path.join(self.root, name))
@@ -91,6 +95,9 @@ class TrajectoryLabel():
                 for pos in posList:
                     pygame.draw.circle(self.screen,(255,0,0),(pos[1], pos[2]),5) 
                 # 刷新屏幕
+                
+                mouse_pos_tuple=pygame.mouse.get_pos()
+                cursor=list(mouse_pos_tuple)
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -104,30 +111,35 @@ class TrajectoryLabel():
                             labelling_one_image=False
                             labelling_trajectory=False
                             print("finish job")
-                            # pygame.quit()
                             break
                         if event.key==pygame.K_RETURN:
-                            pos=pygame.mouse.get_pos()
-                            posList.append((timestamp,pos[0], pos[1]))
-                            print ("timestamp={},x = {}, y = {}".format(timestamp,pos[0], pos[1],))
+                            posList.append((timestamp,cursor[0], cursor[1],index))
+                            print ("timestamp={},x = {}, y = {}".format(timestamp,cursor[0], cursor[1],))
                             labelling_one_image=False
+                        if event.key==pygame.K_LEFT:
+                            cursor[0] -= self.cursor_speed
+                        if event.key==pygame.K_RIGHT:
+                            cursor[0] += self.cursor_speed
+                        if event.key==pygame.K_UP:
+                            cursor[1] -= self.cursor_speed
+                        if event.key==pygame.K_DOWN:
+                            cursor[1] += self.cursor_speed
+                        
+                        pygame.mouse.set_pos((cursor[0], cursor[1]))
                             
                     elif event.type == pygame.MOUSEBUTTONDOWN:
-                        pos=pygame.mouse.get_pos()
-                        posList.append((timestamp,pos[0], pos[1],))
-                        print ("timestamp={},x = {}, y = {}".format(timestamp,pos[0], pos[1]))
+                        posList.append((timestamp,cursor[0], cursor[1],index))
+                        print ("timestamp={},x = {}, y = {}".format(timestamp,cursor[0], cursor[1]))
                         labelling_one_image=False
-                # 获取鼠标位置
-                mouse_pos = pygame.mouse.get_pos()
+
             # 在鼠标位置画十字
-                self.draw_crosshair(mouse_pos)
-                
+                self.draw_crosshair(cursor)
                 clock.tick(60)
 
                 
         pygame.quit()
         file_name=input("input the file name to save:")
-        file_name=file_name+".txt"
+        file_name=file_name+"_"+str(starting_timestamp)+".txt"
         print(file_name)
         
         with open(file_name, "w", encoding='utf-8') as f:
@@ -139,6 +151,8 @@ class TrajectoryLabel():
                 f.write(str(pos[1]*self.scale))
                 f.write(',')
                 f.write(str(pos[2]*self.scale))
+                f.write(',')
+                f.write(str(pos[3]))
                 f.write("\n")
                 
         # save the results
@@ -146,8 +160,8 @@ class TrajectoryLabel():
 
 def main():
     # data_root=input("please input the full path of data root folder:")
-    trajectoryLabel=TrajectoryLabel('.\output_images')
-    start_idx=100
+    trajectoryLabel=TrajectoryLabel('.\output_images_ns')
+    start_idx=1931
     trajectoryLabel.label(start_idx)
     
 if __name__== "__main__" :

@@ -1,7 +1,7 @@
 import numpy as np
 import pymap3d as pm
 import common.mathLib as ml
-import test_plot
+from visualize import visualizor
 
 class Trajectory:
     def __init__(self):
@@ -142,18 +142,13 @@ def main():
             pos_enu=converter.pixel2enu(u_pixel,v_pixel)
             example_coordinates.append((pos_enu[0],pos_enu[1]))
             aaa=1
-        test_plot.plot_trajectory(example_coordinates)
+        visualizor.plot_trajectory(example_coordinates)
     converter=Converter()
     pos_enu=[0,10,0]
-    aaa=converter.enu2pixel(pos_enu)
     u_pixel = 1418
     v_pixel = 732
     pos_pixel=[u_pixel,v_pixel]
     pos_enu=converter.pixel2enu(u_pixel,v_pixel)
-    
-    
-    # data_root=input("please input the full path of data root folder:")
-    # trajectoryLabel=TrajectoryLabel('.\data')
-    # trajectoryLabel.label()
+
 if __name__== "__main__" :
     main()

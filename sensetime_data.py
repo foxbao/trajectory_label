@@ -1,11 +1,23 @@
 import json
 import preprocess
-import test_plot
+from visualize import visualizor
 from common import geographic
 
 class TrackedTargetDB:
     def __init__(self) -> None:
         self.dict={}
+        self.time_trajectories_dict={}
+        
+        
+    def matching_trajectory(self,label_trajectory):
+        time_label=0
+        
+        # use the label time to match the roadside time trajectories
+        
+        # get the most matched
+        
+        
+        pass
     
 class TrackedTarget:
     def __init__(self) -> None:
@@ -55,13 +67,11 @@ class SensetimeProcessor:
     def visualize_data(self):
         # plot all tracked trajectory
         for target_uuid in self.database.dict:
-            print("uuid:",target_uuid)
             trajectory=self.database.dict[target_uuid]
             example_coordinates=[]
             for single_pt in trajectory:
                 example_coordinates.append((single_pt.enu[0],single_pt.enu[1]))
-            test_plot.plot_trajectory(example_coordinates)
-            aaaa=2
+            visualizor.plot_trajectory(example_coordinates)
     
     def process_data(self,input_data):
         prepare_data=False

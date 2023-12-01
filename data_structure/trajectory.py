@@ -1,4 +1,5 @@
 import convert as conv
+from visualize import visualizor
 
 class Pos:
     def __init__(self) -> None:
@@ -33,7 +34,11 @@ class TrajectoryDB:
         with open(file_path, 'r') as file:
             for line in file:
                 # 假设每行数据是以逗号分隔的
-                timestamp,u, v = map(int, line.strip().split(','))
+                data= line.strip().split(',')
+                timestamp=int(data[0])
+                u=float(data[1])
+                v=float(data[2])
+                # timestamp,u, v = map(int, line.strip().split(','))
                 pos=Pos()
                 pos.timestamp=timestamp
                 pos.uv=[u,v]
@@ -53,5 +58,20 @@ class TrajectoryDB:
                 trajectory = self.read_trajectory_from_file(file_path)
                 # 将trajectory对象添加到列表中
                 self.add_trajectory(trajectory)
-                # trajectories.append(trajectory)
+                
+    def visualize_data(self):
+        # plot all tracked trajectory
+        for key,trajectory in self.trajectories.items():
+            example_coordinates=[]
+            for single_pt in trajectory.pos_list:
+                example_coordinates.append((single_pt.enu[0],single_pt.enu[1]))
+            
+            visualizor.plot_trajectory(example_coordinates)
+        # for target_uuid in self.database.dict:
+        #     print("uuid:",target_uuid)
+        #     trajectory=self.database.dict[target_uuid]
+        #     example_coordinates=[]
+        #     for single_pt in trajectory:
+        #         example_coordinates.append((single_pt.enu[0],single_pt.enu[1]))
+        #     visualizor.plot_trajectory(example_coordinates)
         
