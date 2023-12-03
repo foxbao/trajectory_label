@@ -2,6 +2,8 @@ import json
 import preprocess
 from visualize import visualizor
 from common import geographic
+from common import timeLib
+from vehicle_database import vehicle_database as vdb
 
 class TrackedTargetDB:
     def __init__(self) -> None:
@@ -15,7 +17,6 @@ class TrackedTargetDB:
         # use the label time to match the roadside time trajectories
         
         # get the most matched
-        
         
         pass
     
@@ -37,7 +38,7 @@ class Target:
         geog=geographic.Geographic()
         llh=(self.latitude,self.longitude,0)
         self.enu=geog.llh2enu(llh)
-        aaaa=1
+        self.utctime=timeLib.unix_to_utc_milliseconds(self.timestamp)
         # Add other attributes as needed
 
 class DeviceData:
@@ -62,6 +63,7 @@ def read_file_and_extract_data(file_path):
 class SensetimeProcessor:
     def __init__(self) -> None:
         self.database=TrackedTargetDB()
+        self.db2=vdb.VehicleDB()
         pass
     
     def visualize_data(self):
@@ -73,28 +75,44 @@ class SensetimeProcessor:
                 example_coordinates.append((single_pt.enu[0],single_pt.enu[1]))
             visualizor.plot_trajectory(example_coordinates)
     
-    def process_data(self,input_data):
-        prepare_data=False
-        if prepare_data:
+    
+    def get_vehicle_uuid_list(self):
+        return self.db2.get_vehicle_uuid_list()
+    
+    def process_data(self,input_data,combine_json=True,load2database=False):
+        
+        if combine_json:
             real_input = "./sensetime_data/real_input.json"
             preprocess.add_delimiter(input_data, real_input)
         # Example usage
+        
+        self.db2.connect_db()
         file_path = "./sensetime_data/real_input.json"
-        device_data_instances = read_file_and_extract_data(file_path)
+        if load2database:
+            self.db2.delete_table()
+            self.db2.create_table()
+            device_data_instances = read_file_and_extract_data(file_path)
+            # Access the extracted data
+            all_targets=[]
+            for device_data_instance in device_data_instances:
+                self.db2.add_data_targets(device_data_instance.targets)
+                # all_targets=all_targets+device_data_instance.targets
+            #     # print("rcuId:",device_data_instance.rcuId,device_data_instance.deviceType)
+                # for target in device_data_instance.targets:
+                #     self.db2.add_data(target)
+                    # uuid=target.uuid
+                    # if uuid not in self.database.dict:
+                    #     self.database.dict[uuid]=[]
+                    # self.database.dict[uuid].append(target)
+            # self.db2.add_data_targets(all_targets)
 
-        # Access the extracted data
-        for device_data_instance in device_data_instances:
-            print("rcuId:",device_data_instance.rcuId,device_data_instance.deviceType)
-            for target in device_data_instance.targets:
-                uuid=target.uuid
-                if uuid not in self.database.dict:
-                    self.database.dict[uuid]=[]
-                self.database.dict[uuid].append(target)
 
 def main():
     sensetimeProcessor=SensetimeProcessor()
     input_data = "./sensetime_data/Edge_RCU_Data-1_1701262648047.json"
-    sensetimeProcessor.process_data(input_data)
+    sensetimeProcessor.process_data(input_data,combine_json=False,load2database=False)
+    uuid_list=sensetimeProcessor.get_vehicle_uuid_list()
+    
     sensetimeProcessor.visualize_data()
         
 if __name__ == "__main__":
