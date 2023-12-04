@@ -1,4 +1,4 @@
-'''加逗号分隔符，并且使json文件变为列表形式'''
+'''加逗号分隔符,并且使json文件变为列表形式'''
 def add_delimiter(input_data, real_input):
     '''
     :param input_data: 原始输入json文件

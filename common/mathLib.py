@@ -33,47 +33,55 @@ def rot2euler(R):
  
     return np.array([x, y, z])
  
-def distance_point_to_segment(P, P1, P2):
-    # 计算线段的长度
-    segment_length = math.sqrt((P2[0] - P1[0]) ** 2 + (P2[1] - P1[1]) ** 2)
+def point_to_segment_distance(point, segment):
+    p, p1, p2 = np.array(point), np.array(segment[0]), np.array(segment[1])
+    
+    # 计算线段的方向向量
+    v = p2 - p1
+    
+    # 计算点到线段起点的向量
+    w = p - p1
+    
+    # 计算点到线段的投影点的参数 t
+    t = np.dot(w, v) / np.dot(v, v)
+    
+    # 如果 t 在 [0, 1] 之间，表示投影点在线段上
+    if 0 <= t <= 1:
+        # 计算投影点的坐标
+        projection_point = p1 + t * v
+        
+        # 计算点到投影点的距离
+        distance = np.linalg.norm(p - projection_point)
+        
+        return distance, projection_point
+    
+    # 如果 t < 0，则投影点在线段起点的反方向
+    elif t < 0:
+        distance = np.linalg.norm(p - p1)
+        return distance, p1
+    
+    # 如果 t > 1，则投影点在线段终点的反方向
+    else:
+        distance = np.linalg.norm(p - p2)
+        return distance, p2
 
-    # 如果线段长度为零，返回点 P 到 P1 的距离
-    if segment_length == 0:
-        return math.sqrt((P[0] - P1[0]) ** 2 + (P[1] - P1[1]) ** 2)
-
-    # 计算线段的单位向量
-    u = ((P2[0] - P1[0]) / segment_length, (P2[1] - P1[1]) / segment_length)
-
-    # 计算点 P 到 P1 的向量
-    v = (P[0] - P1[0], P[1] - P1[1])
-
-    # 计算点 P 到线段的投影长度
-    projection_length = u[0] * v[0] + u[1] * v[1]
-
-    # 如果投影在线段之前，返回点 P 到 P1 的距离
-    if projection_length <= 0:
-        return math.sqrt((P[0] - P1[0]) ** 2 + (P[1] - P1[1]) ** 2)
-
-    # 如果投影在线段之后，返回点 P 到 P2 的距离
-    if projection_length >= segment_length:
-        return math.sqrt((P[0] - P2[0]) ** 2 + (P[1] - P2[1]) ** 2)
-
-    # 计算点 P 到线段的垂直距离
-    perpendicular_distance = math.sqrt((P[0] - (P1[0] + projection_length * u[0])) ** 2 +
-                                       (P[1] - (P1[1] + projection_length * u[1])) ** 2)
-
-    return perpendicular_distance
+# segments is composed with several 2D points
+def point_to_segments_distance(point,segments):
+    
+    
+    pass
 
 
 def main():
     
-    # 示例
-    P = (2, 3)
-    P1 = (1, 1)
-    P2 = (4, 5)
+# 示例使用
+    point_P = (2, 3)
+    segment_P1_P2 = ((1, 1), (5, 5))
 
-    result = distance_point_to_segment(P, P1, P2)
-    print(f"点 P 到线段的距离为: {result}")
+    distance, nearest_point_on_segment = point_to_segment_distance(point_P, segment_P1_P2)
+
+    print(f"点到线段的距离: {distance}")
+    print(f"离开点最近的线段上的点: {nearest_point_on_segment}")
     
     euler=[0,0,30]
     rot=euler2rot(euler)

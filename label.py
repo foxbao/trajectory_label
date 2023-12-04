@@ -161,7 +161,9 @@ class TrajectoryLabel():
 def main():
     # data_root=input("please input the full path of data root folder:")
     trajectoryLabel=TrajectoryLabel('.\output_images_ns')
-    start_idx=6598
+    start_idx=247
+    # start_idx=6598
+
     trajectoryLabel.label(start_idx)
     
 if __name__== "__main__" :

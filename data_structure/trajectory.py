@@ -9,9 +9,9 @@ class Pos:
         pass
     
 class Trajectory:
-    def __init__(self):
+    def __init__(self,uuid=0):
         self.pos_list=[]
-        self.uuid=0
+        self.uuid=uuid
         
     def add_pos(self,pos):
         self.pos_list.append(pos)

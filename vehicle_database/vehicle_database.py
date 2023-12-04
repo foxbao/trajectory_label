@@ -168,13 +168,63 @@ class VehicleDB:
             
     def get_vehicle_uuid_list(self):
         
-        select_student_numbers_query = f"SELECT DISTINCT uuid FROM {self.coordinate_table_name}"
+        select_vehicle_uuids_query = f"SELECT DISTINCT uuid FROM {self.coordinate_table_name}"
         # 执行查询
-        self.cursor.execute(select_student_numbers_query)
+        self.cursor.execute(select_vehicle_uuids_query)
         
         uuid_list = [row[0] for row in self.cursor.fetchall()]
         return uuid_list
         
+    def get_trajectory_timestamp_range(self,timestamp0,timestamp1):
+        # 查询在给定时间戳范围内的所有坐标点的 SQL 语句
+        select_coordinates_query = f"SELECT uuid, MAX(timestamp) AS max_timestamp FROM {self.coordinate_table_name} WHERE timestamp BETWEEN %s AND %s GROUP BY uuid"
+        self.cursor.execute(select_coordinates_query, (timestamp0, timestamp1))
+        coordinates = self.cursor.fetchall()
+        
+        uuids=[]
+        for coordinate in coordinates:
+            uuids.append(coordinate[0])
+        return uuids
+    
+    def get_trajectory_uuid_timestampe_range(self,uuid,timestamp0,timestamp1):
+        select_coordinates_query = f"SELECT uuid,timestamp,enu_x, enu_y FROM {self.coordinate_table_name} WHERE uuid = %s AND timestamp BETWEEN %s AND %s"
+        self.cursor.execute(select_coordinates_query, (uuid,timestamp0, timestamp1))
+        coordinates = self.cursor.fetchall()
+        
+        # 打印轨迹坐标点
+        trajectory=[]
+        print(f"轨迹 {uuid} 的在timestamp {timestamp0}和{timestamp1}之间的点:")
+        trajectory=[]
+        for coordinate in coordinates:
+            pt=[coordinate[0],int(coordinate[1]),float(coordinate[2]),float(coordinate[3])]
+            trajectory.append(pt)
+        return trajectory
+    
+    
+    def get_trajectory_uuid(self,uuid):
+        
+        # 查询给定轨迹 UUID 的所有坐标点的 SQL 语句
+        select_coordinates_query = f"SELECT uuid,timestamp,enu_x, enu_y FROM {self.coordinate_table_name} WHERE uuid = %s"
+
+        # 执行查询
+        self.cursor.execute(select_coordinates_query, (uuid,))
+        coordinates = self.cursor.fetchall()
+        
+        # 打印轨迹坐标点
+        trajectory=[]
+        print(f"轨迹 {uuid} 的所有坐标点:")
+        trajectory=[]
+        for coordinate in coordinates:
+            pt=[]
+            pt.append(coordinate[0])
+            pt.append(int(coordinate[1]))
+            pt.append(float(coordinate[2]))
+            pt.append(float(coordinate[3]))
+            trajectory.append(pt)
+            # print(f"坐标点: ({coordinate[1]}, {coordinate[2]})")
+        return trajectory
+    
+    
 def main():
     vehicle_db=VehicleDB()
     vehicle_db.connect_db()
